@@ -10,11 +10,31 @@ namespace MoviesAPI.Controllers
     {
         private static List<Movie> movies = new List<Movie>();
 
+        //
+        private static int id = 0;
+
+
         [HttpPost]
         public void AddMovie([FromBody] Movie movie)
         {
+            movie.Id = id++;
             movies.Add(movie);
             Console.WriteLine(movie.Title);
+        }
+
+        [HttpGet]
+        public IEnumerable<Movie> GetAllMovies([FromQuery] int skip = 0, [FromQuery] int take = 50)
+        {
+            return movies.Skip(skip).Take(take);
+        }
+
+        /**
+         * ? -> indicates that this method can return null, if doesnt exist a movie if the specified id
+         */
+        [HttpGet("{id}")]
+        public Movie? GetMovieById(int id)
+        {
+            return movies.FirstOrDefault(movie => movie.Id == id);
         }
     }
 }

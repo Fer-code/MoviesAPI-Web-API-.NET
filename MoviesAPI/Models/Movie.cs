@@ -4,7 +4,7 @@ namespace MoviesAPI.Models
 {
     public class Movie
     {
-        //public int Id { get; set; }
+        public int Id { get; set; }
 
         [Required(ErrorMessage = "Title field is required")]
         public string Title { get; set; }
