@@ -15,11 +15,13 @@ namespace MoviesAPI.Controllers
 
 
         [HttpPost]
-        public void AddMovie([FromBody] Movie movie)
+        public IActionResult AddMovie([FromBody] Movie movie)
         {
             movie.Id = id++;
             movies.Add(movie);
-            Console.WriteLine(movie.Title);
+
+            return CreatedAtAction(nameof(GetMovieById), new { id = movie.Id},
+                movie);
         }
 
         [HttpGet]
@@ -29,12 +31,16 @@ namespace MoviesAPI.Controllers
         }
 
         /**
-         * ? -> indicates that this method can return null, if doesnt exist a movie if the specified id
+         * Movie? -> indicates that this method can return null, if doesnt exist a movie if the specified id
          */
         [HttpGet("{id}")]
-        public Movie? GetMovieById(int id)
+        public IActionResult GetMovieById(int id)
         {
-            return movies.FirstOrDefault(movie => movie.Id == id);
+            var movie = movies.FirstOrDefault(movie => movie.Id == id);
+            
+            //If movie null apear 404 not found
+            if(movie == null) return NotFound();
+            return Ok(movie);
         }
     }
 }
