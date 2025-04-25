@@ -1,8 +1,16 @@
+using MoviesAPI.Data;
+using Microsoft.EntityFrameworkCore;
+
 internal class Program
 {
     private static void Main(string[] args)
     {
         var builder = WebApplication.CreateBuilder(args);
+
+        var connectionString = builder.Configuration.GetConnectionString("MovieConnection");
+
+        builder.Services.AddDbContext<MovieContext>(opts =>
+            opts.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
         // Add services to the container.
 
