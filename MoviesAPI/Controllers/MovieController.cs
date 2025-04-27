@@ -23,7 +23,14 @@ namespace MoviesAPI.Controllers
             _mapper = mapper;
         }
 
+        /// <summary>
+        /// Add movie in DB
+        /// </summary>
+        /// <param name="movieDto">Object</param>
+        /// <returns>IActionResult</returns>
+        /// <response code="201">If successful</response>
         [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         public IActionResult AddMovie([FromBody] CreateMovieDto movieDto)
         {
             Movie movie = _mapper.Map<Movie>(movieDto);
