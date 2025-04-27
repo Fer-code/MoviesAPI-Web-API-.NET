@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
 using MoviesAPI.Data;
 using MoviesAPI.Dtos;
@@ -61,6 +62,35 @@ namespace MoviesAPI.Controllers
             if(movie == null) return NotFound();
 
             _mapper.Map(movieDto, movie);
+            _context.SaveChanges();
+
+            //quando faz alteração em um recurso usar noContent
+            return NoContent();
+        }
+
+
+        /**
+         * Update patch - just update specified fields
+         */
+        [HttpPatch("{id}")]
+        public IActionResult UpdateMoviePatch(int id, JsonPatchDocument<UpdateMovieDto> patch)
+        {
+            var movie = _context.Movies.FirstOrDefault(movie => movie.Id == id);
+            if (movie == null) return NotFound();
+
+            //Converter para DTO o filme que acabamos de recuperar do BD
+            var movieToUpdate = _mapper.Map<UpdateMovieDto>(movie);
+
+            //verificar se é valido
+            patch.ApplyTo(movieToUpdate, ModelState);
+
+            //se nao for valido
+            if(!TryValidateModel(movieToUpdate))
+            {
+                return ValidationProblem(ModelState);
+            }
+
+            _mapper.Map(movieToUpdate, movie);
             _context.SaveChanges();
 
             //quando faz alteração em um recurso usar noContent
