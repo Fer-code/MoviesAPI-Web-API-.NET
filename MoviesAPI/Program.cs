@@ -12,6 +12,9 @@ internal class Program
         builder.Services.AddDbContext<MovieContext>(opts =>
             opts.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
+        //chamar auto mapper para todo contexto da nossa aplicação
+        builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
         // Add services to the container.
 
         builder.Services.AddControllers();
