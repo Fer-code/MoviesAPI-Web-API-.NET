@@ -37,9 +37,9 @@ namespace MoviesAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<Movie> GetAllMovies([FromQuery] int skip = 0, [FromQuery] int take = 50)
+        public IEnumerable<ReadMovieDto> GetAllMovies([FromQuery] int skip = 0, [FromQuery] int take = 50)
         {
-            return _context.Movies.Skip(skip).Take(take);
+            return _mapper.Map<List<ReadMovieDto>>(_context.Movies.Skip(skip).Take(take));
         }
 
         /**
@@ -52,7 +52,9 @@ namespace MoviesAPI.Controllers
             
             //If movie null apear 404 not found
             if(movie == null) return NotFound();
-            return Ok(movie);
+
+            var movieDto = _mapper.Map<ReadMovieDto>(movie);
+            return Ok(movieDto);
         }
 
         [HttpPut("{id}")]
@@ -94,6 +96,18 @@ namespace MoviesAPI.Controllers
             _context.SaveChanges();
 
             //quando faz alteração em um recurso usar noContent
+            return NoContent();
+        }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteMovie(int id)
+        {
+            var movie = _context.Movies.FirstOrDefault(movie =>movie.Id == id);
+            if(movie == null) return NotFound();
+
+            _context.Remove(movie);
+            _context.SaveChanges();
+
             return NoContent();
         }
     }
